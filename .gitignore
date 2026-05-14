@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Environment Variables
+.env
+
+# Data & Embeddings (Allowed for Cloud Deployment)
+data/raw/
+
+# IDEs
+.vscode/
+.idea/
