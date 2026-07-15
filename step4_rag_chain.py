@@ -29,10 +29,15 @@ from langchain_community.vectorstores import FAISS
 from langchain_groq import ChatGroq
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+import streamlit as st
 
 # load_dotenv()  # loads GROQ_API_KEY from .env file
 
 groq_api_key = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY")
+
+if not groq_api_key:
+    st.error("❌ GROQ_API_KEY not found. Add it in Streamlit Secrets.")
+    st.stop()
 
 print("=" * 60)
 print("STEP 4: Building the RAG Chain")
