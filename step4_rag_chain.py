@@ -23,14 +23,16 @@
 # ============================================================
 
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_groq import ChatGroq
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
-load_dotenv()  # loads GROQ_API_KEY from .env file
+# load_dotenv()  # loads GROQ_API_KEY from .env file
+
+groq_api_key = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY")
 
 print("=" * 60)
 print("STEP 4: Building the RAG Chain")
@@ -77,7 +79,8 @@ print("\nConnecting to Groq LLM...")
 llm = ChatGroq(
     model="llama-3.1-8b-instant",   # LLaMA 3.1 8B — fast and accurate
     temperature=0.2,           # low temp = more factual, less creative
-    groq_api_key=os.getenv("GROQ_API_KEY")
+    groq_api_key=groq_api_key
+    # groq_api_key=os.getenv("GROQ_API_KEY")
 )
 
 # ============================================================
