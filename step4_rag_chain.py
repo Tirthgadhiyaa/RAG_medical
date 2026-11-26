@@ -75,7 +75,7 @@ retriever = vectorstore.as_retriever(
 # ============================================================
 print("\nConnecting to Groq LLM...")
 llm = ChatGroq(
-    model="llama-3.1-8b-instant",   # LLaMA 3.1 8B — fast and accurate
+    model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),   # Active Groq model
     temperature=0.2,           # low temp = more factual, less creative
     groq_api_key=os.getenv("GROQ_API_KEY")
 )

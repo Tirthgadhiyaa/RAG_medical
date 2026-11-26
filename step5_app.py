@@ -161,10 +161,20 @@ def load_rag_pipeline():
         search_kwargs={"k": 5}
     )
     
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
+        try:
+            groq_api_key = st.secrets.get("GROQ_API_KEY")
+        except Exception:
+            groq_api_key = None
+
+    if not groq_api_key:
+        raise ValueError("GROQ_API_KEY not found. Set it in .env or Streamlit Secrets.")
+
     llm = ChatGroq(
-        model="llama-3.1-8b-instant",
+        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
         temperature=0.2,
-        groq_api_key=os.getenv("GROQ_API_KEY")
+        groq_api_key=groq_api_key
     )
     
     prompt_template = """SYSTEM: You are a Clinical Knowledge Retrieval System.
@@ -242,16 +252,19 @@ if loaded:
         if st.button("🔍 Search", type="primary"):
             if user_question.strip():
                 with st.spinner("Analyzing Knowledge Base..."):
-                    start_time = time.time()
-                    result = qa_chain.invoke({"query": user_question})
-                    elapsed = time.time() - start_time
-                    
-                    st.session_state.chat_history.append({
-                        "question": user_question,
-                        "answer": result['result'],
-                        "sources": result['source_documents'],
-                        "time": elapsed
-                    })
+                    try:
+                        start_time = time.time()
+                        result = qa_chain.invoke({"query": user_question})
+                        elapsed = time.time() - start_time
+                        
+                        st.session_state.chat_history.append({
+                            "question": user_question,
+                            "answer": result['result'],
+                            "sources": result['source_documents'],
+                            "time": elapsed
+                        })
+                    except Exception as e:
+                        st.error(f"Failed to generate response: {str(e)}")
     with col2:
         if st.button("🗑️ Clear History"):
             st.session_state.chat_history = []
